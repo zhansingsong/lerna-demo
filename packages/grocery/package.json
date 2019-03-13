@@ -1,5 +1,5 @@
 {
-  "name": "grocery",
+  "name": "zhansingsong-grocery",
   "version": "0.0.3",
   "description": "",
   "main": "index.js",
@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node index.js"
   },
+  "files": ["index.js"],
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -14,5 +15,5 @@
     "eslint": "^5.15.1",
     "lodash": "^4.17.11"
   },
-  "gitHead": "2f5ce601687ad799c1cd561838eb7d9dab5e64df"
+  "gitHead": "67e8468b86709f6de7b2adf246b58e108ff59670"
 }
