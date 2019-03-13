@@ -13,5 +13,6 @@
   "dependencies": {
     "eslint": "^5.15.1",
     "lodash": "^4.17.11"
-  }
+  },
+  "gitHead": "2f5ce601687ad799c1cd561838eb7d9dab5e64df"
 }
