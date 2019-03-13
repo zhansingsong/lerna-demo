@@ -1,3 +1,3 @@
 # lerna-demo
 
-(详情查看)[./Lerna-monorepos.md]
+[详情查看](./Lerna-monorepos.md)
