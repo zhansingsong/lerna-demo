@@ -1,6 +1,6 @@
 # mnonorepos by lerna
 
-最近在开发一个类似 [create-react-app](https://github.com/facebook/create-react-app) 工具。但面临一个问题，需要同时维护两个 packages，开发起来不是很方便，后期维护成本也高（如版本维护）。于是查看了 create-react-app 源码，发现在其源码中有个 `lerna.json` 文件。好奇这个文件是做什么，就了解一番。经查阅了解到 [lerna](https://github.com/lerna/lerna) 可以用来管理项目中多个 packages。这正是自己所需要的，于是就有了这篇文章。本文主要对 lerna 的使用做个简单介绍。
+最近在开发一个类似 [create-react-app](https://github.com/facebook/create-react-app) 工具。但面临一个问题，需要同时维护两个 packages，开发起来不是很方便，后期维护成本也高（如版本号维护）。于是查看了 create-react-app 源码，发现在其源码中有个 `lerna.json` 文件。好奇这个文件是做什么的，就了解一番。经查阅了解到 [Lerna](https://github.com/lerna/lerna) 可以用来管理项目中多个 packages。这正是自己所需要的，于是就有了这篇文章。本文主要对 Lerna 的使用做个简单介绍。
 
 ## Lerna
 
@@ -15,14 +15,18 @@
 ## 安装 Lerna
 
 ```bash
+# npm
 npm install --global lerna || npm install -g lerna
+
+# yarn
+yarn global add lerna
 ```
 
 如果不想安装，也可以使用 [npx](https://www.npmjs.com/package/npx)。
 
 ## 初始化项目
 
-创建一个名为 lerna-demo 项目
+创建一个名为 [lerna-demo](https://github.com/zhansingsong/lerna-demo) 项目。
 ```bash
 git init lerna-demo && cd lerna-demo
 ```
@@ -166,7 +170,7 @@ lerna add eslint --dev
 ```js
 lerna bootstrap --hoist
 ```
-`lerna bootstrap` 会为根据每个 package 的`package.json` 为其安装依赖。如果加上了 `--hoist` 参数，Lerna 会把所有 packages 中共有的依赖安装到根目录中，然后分别在各自的 `node_modules/.bin` 中创建软链接指向对应的模块实际路径。
+`lerna bootstrap` 会为根据每个 package 的`package.json` 为其安装依赖。如果加上了 `--hoist` 参数，Lerna 会把所有 packages 中共有的依赖包安装到根目录中，然后分别在各自的 `node_modules/.bin` 中创建软链接指向对应的模块实际路径。
 
 ```
 ├── apple
@@ -203,7 +207,7 @@ yarn add -D eslint
 ```
 因为 node 在查找模块时，会从当前目录向上逐级查找。
 
-当然，如果只想对特定 package 安装依赖包，可以通过如下方式：
+也许只想对特定 package 安装依赖包，可以通过如下方式：
 
 ```js
  lerna add lodash --scope=grocery
@@ -216,20 +220,71 @@ Lerna 提供了两种版本管理模式：
 - Fixed/Locked mode (default)
 
   任何 package 更新发布，都统一由根目录下 `lerna.json` 中的 `version` 字段来记录跟踪。即这种模式会将所有 packages 版本号关联起来。但这样会存在一个问题：
-  任何 package 主版本号变化，都会导致其他所有 package 拥有一个新的主版本号。
+  任何 package 版本号变化，都会导致其他所有 package 拥有一个新的版本号。
   
   开启方法：默认模式。
 
 - Independent mode (--independent)
 
-  packages 发布新版时，会逐个询问每个 package 需要升级的版本号。即每个 package 都独立维护着一个 version。这样就可以有效地避免默认模式下版本号语义化的问题。
+  packages 发布新版时，会逐个询问每个 package 需要升级的版本号。即每个 package 都独立维护自己的 version。这样就可以有效地避免默认模式下版本号语义化的问题。
   
   开启方法：
     - `lerna init --independent`
     - 将 `lerna.json` 中的 `version` 字段设置为 `'independent'`
 
 ## 发布
+要将发布新版时，只需执行如下命令即可。
 
+```bash
+lerna publish
+```
+另外，Lerna 还为 `lerna publish` 提供了一些选项：[@lerna/publish](https://github.com/lerna/lerna/tree/master/commands/publish#readme)。
+
+在执行该命令时，需要注意，至少要有个 **commit**，否则会得到如下提示：
+> Working tree has uncommitted changes, please commit or remove changes before continuing.
+
+或
+
+> Current HEAD is already released, skipping change detection.
+
+因为在发布之前，Lerna 会检查 packages 是否有更新。如果有更新才会以 **一问一答** 的方式获取发布相关信息：
+
+```
+info cli using local version of lerna
+lerna notice cli v3.13.1
+lerna info current version 0.0.5
+lerna info Looking for changed packages since zhansingsong-apple@0.0.5
+? Select a new version (currently 0.0.5) Patch (0.0.6)
+
+Changes:
+ - zhansingsong-apple: 0.0.5 => 0.0.6
+ - zhansingsong-banana: 0.0.4 => 0.0.6
+ - zhansingsong-grocery: 0.0.4 => 0.0.6
+
+? Are you sure you want to publish these packages? Yes
+lerna info execute Skipping GitHub releases
+lerna info git Pushing tags...
+lerna info publish Publishing packages to npm...
+....
+```
+上述是默认模式下的输出信息。虽然只对 `zhansingsong-apple` 做了修改，然而在版本号更新时，会更新所有 packages 的版本号。而且如果执行发布，会把所有的 packages 都发布到 NPM。那如果换成`Independent`模式，会是怎样呢？
+
+```
+info cli using local version of lerna
+lerna notice cli v3.13.1
+lerna info versioning independent
+lerna info Looking for changed packages since v0.0.7
+? Select a new version for zhansingsong-apple (currently 0.0.7) Patch (0.0.8)
+
+Changes:
+ - zhansingsong-apple: 0.0.7 => 0.0.8
+
+? Are you sure you want to publish these packages? Yes
+lerna info execute Skipping GitHub releases
+lerna info git Pushing tags...
+lerna info publish Publishing packages to npm...
+```
+在 **Independent** 模式下，只会更新已更新 `zhansingsong-apple` 的版本号，并只将其发布到 NPM。
 
 
 ## 其他常用命令
