@@ -1,4 +1,4 @@
-# mnonorepos by lerna
+# monorepos by lerna
 
 最近在开发一个类似 [create-react-app](https://github.com/facebook/create-react-app) 工具。但面临一个问题，需要同时维护两个 packages，开发起来不是很方便，后期维护成本也高（如版本号维护）。于是查看了 create-react-app 源码，发现在其源码中有个 `lerna.json` 文件。好奇这个文件是做什么的，就了解一番。经查阅了解到 [Lerna](https://github.com/lerna/lerna) 可以用来管理项目中多个 packages。这正是自己所需要的，于是就有了这篇文章。本文主要对 Lerna 的使用做个简单介绍。
 
