@@ -48,19 +48,19 @@ lerna init
 
 >singsong: 为了方便讲解，这里假设有三个 packages：banana、apple、grocery。其中 grocery 依赖于 banana、apple 两个 package。
 
-在 **packages** 目录下创建 **banana**、**apple**、**grocery** 三个目录：
+在 `packages/` 目录下创建 **banana**、**apple**、**grocery** 三个目录：
 
 ```bash
 mkdir banana apple grocery
 ```
 
-然后分别在 **banana**、**apple**、**grocery** 每个目录下执行如下命令初始 package：
+然后分别在 **banana**、**apple**、**grocery** 目录下执行如下命令初始化 package：
 
 ```bash
 npm init -y
 ```
 
-并分别创建一个`index.js`文件，并增加如下代码：
+并分别创建一个`index.js`文件，增加如下代码：
 ```js
 // apple index.js
 module.exports = 'apple package';
@@ -99,13 +99,13 @@ console.log(banana);
 
 ### 创建 packages 依赖关系
 
-上一步骤已创建了 **banana**、**apple**、**grocery** 包，其中 **grocery** 依赖于 **banana**、**apple** 包。要建立此依赖只需执行如下命令：
+上一步骤已创建了 **banana**、**apple**、**grocery** 三个 packages，其中 **grocery** 依赖于 **banana**、**apple**。要建立此依赖只需执行如下命令：
 
 ```js
 // add apple to grocery as a dependency
 lerna add apple packages/grocery
 // add banana to grocery as a dependency
-lerna add apple packages/grocery
+lerna add banana packages/grocery
 ```
 
 `lerna add` 类似于 `npm install`。
@@ -138,7 +138,7 @@ lerna add apple packages/grocery
 ```
 
 ## 运行
-为了方便运行代码，在根目录下 `package.json` 增加如下代码：
+为了方便运行代码，对根目录下 `package.json` 文件增加如下代码：
 ```js
   "scripts": {
     "start": "node packages/grocery/index.js"
@@ -161,7 +161,7 @@ banana package
 
 ## 添加第三方依赖
 
-为所有的 package 添加 eslint.
+为所有的 packages 添加 eslint.
 
 ```js
 lerna add eslint --dev
@@ -170,7 +170,7 @@ lerna add eslint --dev
 ```js
 lerna bootstrap --hoist
 ```
-`lerna bootstrap` 会为根据每个 package 的`package.json` 为其安装依赖。如果加上了 `--hoist` 参数，Lerna 会把所有 packages 中共有的依赖包安装到根目录中，然后分别在各自的 `node_modules/.bin` 中创建软链接指向对应的模块实际路径。
+`lerna bootstrap` 会根据每个 package 的 `package.json` 为其安装依赖。如果加上 `--hoist` 参数，Lerna 会把所有 packages 中共有的依赖包安装到根目录中，然后分别在各自的 `node_modules/.bin` 中创建软链接指向对应依赖包的实际路径。
 
 ```
 ├── apple
@@ -207,7 +207,7 @@ yarn add -D eslint
 ```
 因为 node 在查找模块时，会从当前目录向上逐级查找。
 
-也许只想对特定 package 安装依赖包，可以通过如下方式：
+当然，也许只想对特定 package 安装依赖包，可以通过如下方式：
 
 ```js
  lerna add lodash --scope=grocery
@@ -233,7 +233,7 @@ Lerna 提供了两种版本管理模式：
     - 将 `lerna.json` 中的 `version` 字段设置为 `'independent'`
 
 ## 发布
-要将发布新版时，只需执行如下命令即可。
+要发布新版时，只需执行如下命令即可。
 
 ```bash
 lerna publish
@@ -248,6 +248,8 @@ lerna publish
 > Current HEAD is already released, skipping change detection.
 
 因为在发布之前，Lerna 会检查 packages 是否有更新。如果有更新才会以 **一问一答** 的方式获取发布相关信息：
+
+>singsong: 假设你已成功登录 NPM。[如何注册及登录](https://docs.npmjs.com/creating-a-new-npm-user-account)
 
 ```
 info cli using local version of lerna
@@ -267,7 +269,9 @@ lerna info git Pushing tags...
 lerna info publish Publishing packages to npm...
 ....
 ```
-上述是默认模式下的输出信息。虽然只对 `zhansingsong-apple` 做了修改，然而在版本号更新时，会更新所有 packages 的版本号。而且如果执行发布，会把所有的 packages 都发布到 NPM。那如果换成`Independent`模式，会是怎样呢？
+>singsong：为了能成功将 apple、banana、grocery 发布到 NPM，在包命名时都为每个 package 加了 `zhansingsong-` 前缀。
+
+上述是默认模式下的输出信息。虽然只对 **zhansingsong-apple** 做了修改，然而在版本号更新时，会更新所有 packages 的版本号。而且如果执行发布，会把所有的 packages 都发布到 NPM。那如果换成`Independent`模式，会是怎样呢？
 
 ```
 info cli using local version of lerna
@@ -284,7 +288,7 @@ lerna info execute Skipping GitHub releases
 lerna info git Pushing tags...
 lerna info publish Publishing packages to npm...
 ```
-在 **Independent** 模式下，只会更新已更新 `zhansingsong-apple` 的版本号，并只将其发布到 NPM。
+在 **Independent** 模式下，只会更新已更新 **zhansingsong-apple** 的版本号，并只将其发布到 NPM。
 
 
 ## 其他常用命令

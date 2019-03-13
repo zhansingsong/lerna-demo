@@ -12,8 +12,5 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "eslint": "^5.15.1"
-  },
   "gitHead": "67e8468b86709f6de7b2adf246b58e108ff59670"
 }
