@@ -293,6 +293,7 @@ lerna info publish Publishing packages to npm...
 
 ## 其他常用命令
 
+- `lerna create <name> [loc]`：在 `loc` 目录下创建一个 package。默认位置 `packages/`。
 - `lerna version`：更新 package 的版本号。提供 Patch、Minor、Major、Prepatch、Preminor、Premajor、Custom Prerelease、Custom Version 选项。
 - `lerna clean`：删除所有 packages 的 node_modules 目录。PS：不会删除根目录的 node_modules。
 - `lerna list` | `lerna ls` | `lerna ll` | `lerna la`：列举 packages 目录下的所有本地 packages。
